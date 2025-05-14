@@ -62,13 +62,23 @@ namespace FinalDepi.Controllers
 
         public async Task<IActionResult> Search(string query)
         {
-            var products = string.IsNullOrWhiteSpace(query)
-                ? new List<Product>()
-                : await _context.Products
-                    .Where(p => p.Name.Contains(query))
-                    .ToListAsync();
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            var products = await _context.Products
+                .Include(p => p.Category)
+                .Where(p => p.Name.Contains(query) || 
+                           (p.Description != null && p.Description.Contains(query)) ||
+                           (p.Category != null && p.Category.Name.Contains(query)))
+                .ToListAsync();
+
             ViewBag.Query = query;
-            return View(products);
+            ViewBag.Categories = _context.Categories.ToList();
+            ViewBag.SelectedCategory = null;
+
+            return View("Index", products);
         }
     }
 } 

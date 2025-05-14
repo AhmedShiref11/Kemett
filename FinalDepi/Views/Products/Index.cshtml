@@ -1,8 +1,9 @@
 @model IEnumerable<FinalDepi.Models.Product>
 @{
     ViewData["Title"] = "All Products";
-    var selectedSort = Context.Request.Query["sortOrder"].ToString();
+    var selectedSort = Context.Request.Query["sortOrder"].ToString() ?? "";
     var selectedCategory = ViewBag.SelectedCategory as int?;
+    var categories = ViewBag.Categories as List<FinalDepi.Models.Category> ?? new List<FinalDepi.Models.Category>();
 }
 
 <div class="container mt-4">
@@ -13,25 +14,17 @@
             <form method="get" class="d-flex align-items-center" style="gap: 1rem;">
                 <label for="sortOrder" class="form-label mb-0">Sort by:</label>
                 <select name="sortOrder" id="sortOrder" class="form-select" style="width: 200px; border: 1px solid #E5C97B; background: #fff; color: #222;" onchange="this.form.submit()">
-                    @if (selectedSort == "price_asc") {
-                        <option value="price_asc" selected>Price: Low to High</option>
-                    } else {
-                        <option value="price_asc">Price: Low to High</option>
+                    @{
+                        var options = new[] {
+                            new { Value = "name_asc", Text = "Name: A-Z" },
+                            new { Value = "name_desc", Text = "Name: Z-A" },
+                            new { Value = "price_asc", Text = "Price: Low to High" },
+                            new { Value = "price_desc", Text = "Price: High to Low" }
+                        };
                     }
-                    @if (selectedSort == "price_desc") {
-                        <option value="price_desc" selected>Price: High to Low</option>
-                    } else {
-                        <option value="price_desc">Price: High to Low</option>
-                    }
-                    @if (selectedSort == "name_asc") {
-                        <option value="name_asc" selected>Name: A-Z</option>
-                    } else {
-                        <option value="name_asc">Name: A-Z</option>
-                    }
-                    @if (selectedSort == "name_desc") {
-                        <option value="name_desc" selected>Name: Z-A</option>
-                    } else {
-                        <option value="name_desc">Name: Z-A</option>
+                    @foreach (var option in options)
+                    {
+                        <option value="@option.Value" selected="@(selectedSort == option.Value)">@option.Text</option>
                     }
                 </select>
                 @if (selectedCategory.HasValue)
@@ -45,16 +38,9 @@
                 <label for="categoryId" class="form-label mb-0">Filter by category:</label>
                 <select name="categoryId" id="categoryId" class="form-select" style="width: 200px; border: 1px solid #E5C97B; background: #fff; color: #222;" onchange="this.form.submit()">
                     <option value="">All Categories</option>
-                    @foreach (var category in ViewBag.Categories)
+                    @foreach (var category in categories)
                     {
-                        if (selectedCategory == category.CategoryId)
-                        {
-                            <option value="@category.CategoryId" selected>@category.Name</option>
-                        }
-                        else
-                        {
-                            <option value="@category.CategoryId">@category.Name</option>
-                        }
+                        <option value="@category.CategoryId" selected="@(selectedCategory == category.CategoryId)">@category.Name</option>
                     }
                 </select>
                 @if (!string.IsNullOrEmpty(selectedSort))
