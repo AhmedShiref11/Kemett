@@ -1,0 +1,16 @@
+@model FinalDepi.Models.ApplicationUser
+@{
+    ViewData["Title"] = "Delete User";
+    Layout = "_AdminLayout";
+}
+<div class="container" style="max-width:600px;margin:2rem auto;">
+    <h2>Delete User</h2>
+    <div class="alert alert-warning">
+        Are you sure you want to delete user <strong>@Model.Email</strong>?
+    </div>
+    <form asp-action="DeleteUser" method="post">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a asp-action="Users" class="btn btn-secondary ms-2">Cancel</a>
+    </form>
+</div> 

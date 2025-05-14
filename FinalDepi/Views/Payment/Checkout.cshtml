@@ -1,0 +1,96 @@
+@model FinalDepi.Models.ShoppingCart
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<div class="container mt-4">
+    <h2>Checkout</h2>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>Order Summary</h4>
+                </div>
+                <div class="card-body">
+                    @foreach (var item in Model.Items)
+                    {
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h5 class="mb-0">@item.Product.Name</h5>
+                                <small class="text-muted">Quantity: @item.Quantity</small>
+                            </div>
+                            <div class="text-end">
+                                <h5 class="mb-0">$@((item.Price * item.Quantity).ToString("0.00"))</h5>
+                                <small class="text-muted">$@item.Price.ToString("0.00") each</small>
+                            </div>
+                        </div>
+                    }
+                    <hr />
+                    <div class="d-flex justify-content-between">
+                        <h4>Total</h4>
+                        <h4>$@Model.Items.Sum(i => i.Price * i.Quantity).ToString("0.00")</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Payment</h4>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <button id="submitOrder" class="btn btn-primary btn-lg">
+                            Submit Order
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://www.paypal.com/sdk/js?client-id=@ViewBag.PayPalClientId"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script>
+        $(document).ready(function() {
+            toastr.options = {
+                "closeButton": true,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "timeOut": "5000"
+            };
+
+            $('#submitOrder').click(function() {
+                $(this).prop('disabled', true);
+                $(this).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...');
+
+                $.ajax({
+                    url: '@Url.Action("SubmitDirectOrder", "Payment")',
+                    type: 'POST',
+                    success: function(response) {
+                        if (response.success) {
+                            toastr.success(response.message);
+                            setTimeout(function() {
+                                window.location.href = '@Url.Action("Success", "Payment")';
+                            }, 2000);
+                        } else {
+                            toastr.error(response.message);
+                            $('#submitOrder').prop('disabled', false);
+                            $('#submitOrder').html('Submit Order');
+                        }
+                    },
+                    error: function() {
+                        toastr.error('An error occurred while processing your order');
+                        $('#submitOrder').prop('disabled', false);
+                        $('#submitOrder').html('Submit Order');
+                    }
+                });
+            });
+        });
+    </script>
+} 

@@ -1,0 +1,35 @@
+@model IEnumerable<FinalDepi.Models.Product>
+@{
+    ViewData["Title"] = "Manage Products";
+}
+<h2>Manage Products</h2>
+<p>
+    <a asp-action="AddProduct" class="btn btn-primary">Add New Product</a>
+</p>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Category</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model)
+        {
+            <tr>
+                <td>@product.Name</td>
+                <td>@product.Description</td>
+                <td>@product.Price</td>
+                <td>@product.Stock</td>
+                <td>@product.Category?.Name</td>
+                <td>
+                    <a class="btn btn-primary btn-sm" asp-action="EditProduct" asp-route-id="@product.ProductId">Edit</a>
+                    <a class="btn btn-danger btn-sm" asp-action="DeleteProduct" asp-route-id="@product.ProductId">Delete</a>
+            </tr>
+        }
+    </tbody>
+</table> 

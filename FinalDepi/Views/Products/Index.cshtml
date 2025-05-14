@@ -1,0 +1,73 @@
+@model IEnumerable<FinalDepi.Models.Product>
+@{
+    ViewData["Title"] = "All Products";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Our Products</h2>
+    
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var product in Model)
+        {
+            <div class="col">
+                <div class="card h-100">
+                    @if (!string.IsNullOrEmpty(product.ImagePath))
+                    {
+                        <img src="@product.ImagePath" class="card-img-top product-img-thumb" alt="@product.Name">
+                    }
+                    else
+                    {
+                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center product-img-thumb">
+                            <span class="text-muted">No image available</span>
+                        </div>
+                    }
+                    <div class="card-body">
+                        <h5 class="card-title">@product.Name</h5>
+                        <p class="card-text text-muted">@product.Category?.Name</p>
+                        <p class="card-text">@(product.Description?.Length > 100 ? product.Description.Substring(0, 100) + "..." : product.Description)</p>
+                        <p class="card-text"><strong>Price: @product.Price.ToString("C")</strong></p>
+                        <p class="card-text">
+                            <small class="text-muted">
+                                @if (product.Stock > 0)
+                                {
+                                    <span class="text-success">In Stock (@product.Stock available)</span>
+                                }
+                                else
+                                {
+                                    <span class="text-danger">Out of Stock</span>
+                                }
+                            </small>
+                        </p>
+                        @if (product.Stock > 0)
+                        {
+                            <form asp-controller="Cart" asp-action="AddToCart" method="post" class="d-flex align-items-center">
+                                <input type="hidden" name="productId" value="@product.ProductId" />
+                                <input type="number" name="quantity" value="1" min="1" max="@product.Stock" class="form-control form-control-sm me-2" style="width: 70px;" />
+                                <button type="submit" class="btn btn-primary">Add to Cart</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <button class="btn btn-secondary" disabled>Out of Stock</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .product-img-thumb {
+        max-width: 160px;
+        max-height: 160px;
+        width: auto;
+        height: auto;
+        margin: 1rem auto 0 auto;
+        display: block;
+        object-fit: contain;
+        border-radius: 8px;
+        background: #fffbe6;
+        box-shadow: 0 1px 4px rgba(229,201,123,0.10);
+    }
+</style> 

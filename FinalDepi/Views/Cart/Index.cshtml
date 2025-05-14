@@ -1,0 +1,88 @@
+@model FinalDepi.Models.ShoppingCart
+@{
+    ViewData["Title"] = "Shopping Cart";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Shopping Cart</h2>
+
+    @if (!Model.Items.Any())
+    {
+        <div class="alert alert-info">
+            Your cart is empty. <a asp-controller="Products" asp-action="Index">Continue shopping</a>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Total</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Items)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                @if (!string.IsNullOrEmpty(item.Product?.ImagePath))
+                                                {
+                                                    <img src="@item.Product.ImagePath" alt="@item.Product.Name" style="width: 50px; height: 50px; object-fit: cover;" class="me-3">
+                                                }
+                                                <div>
+                                                    <h6 class="mb-0">@item.Product?.Name</h6>
+                                                    <small class="text-muted">@item.Product?.Category?.Name</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>@item.Price.ToString("C")</td>
+                                        <td>
+                                            <form asp-action="UpdateQuantity" method="post" class="d-flex align-items-center">
+                                                <input type="hidden" name="cartItemId" value="@item.CartItemId" />
+                                                <input type="number" name="quantity" value="@item.Quantity" min="1" max="@item.Product?.Stock" class="form-control form-control-sm" style="width: 70px;" onchange="this.form.submit()" />
+                                            </form>
+                                        </td>
+                                        <td>@((item.Price * item.Quantity).ToString("C"))</td>
+                                        <td>
+                                            <form asp-action="RemoveItem" method="post">
+                                                <input type="hidden" name="cartItemId" value="@item.CartItemId" />
+                                                <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Order Summary</h5>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Items (@Model.Items.Sum(i => i.Quantity)):</span>
+                            <span>@Model.Items.Sum(i => i.Price * i.Quantity).ToString("C")</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between mb-3">
+                            <strong>Total:</strong>
+                            <strong>@Model.Items.Sum(i => i.Price * i.Quantity).ToString("C")</strong>
+                        </div>
+                        <a asp-controller="Payment" asp-action="Checkout" class="btn btn-primary w-100">Proceed to Checkout</a>
+                        <a asp-controller="Products" asp-action="Index" class="btn btn-outline-secondary w-100 mt-2">Continue Shopping</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div> 

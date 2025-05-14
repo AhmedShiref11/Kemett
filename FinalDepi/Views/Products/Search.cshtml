@@ -1,0 +1,31 @@
+@model IEnumerable<FinalDepi.Models.Product>
+@{
+    ViewData["Title"] = "Product Search";
+}
+<h2>Search Results for "@ViewBag.Query"</h2>
+@if (!Model.Any())
+{
+    <div class="alert alert-info">No products found.</div>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var product in Model)
+        {
+            <tr>
+                <td>@product.Name</td>
+                <td>@product.Description</td>
+                <td>@product.Price.ToString("C")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+} 

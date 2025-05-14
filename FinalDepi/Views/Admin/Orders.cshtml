@@ -1,0 +1,28 @@
+@model IEnumerable<FinalDepi.Models.Order>
+@{
+    ViewData["Title"] = "View Orders";
+}
+<h2>View Orders</h2>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>User</th>
+            <th>Order Date</th>
+            <th>Total Amount</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>@order.OrderId</td>
+                <td>@order.User.UserName</td>
+                <td>@order.OrderDate</td>
+                <td>@order.TotalAmount</td>
+                <td>@order.PaymentStatus</td>
+            </tr>
+        }
+    </tbody>
+</table> 
