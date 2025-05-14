@@ -15,9 +15,15 @@ namespace FinalDepi.Controllers
         }
 
         // Display all products
-        public IActionResult Index(string sortOrder)
+        public IActionResult Index(string sortOrder, int? categoryId)
         {
             var products = _context.Products.Include(p => p.Category).AsQueryable();
+
+            // Filter by category if specified
+            if (categoryId.HasValue)
+            {
+                products = products.Where(p => p.CategoryId == categoryId);
+            }
 
             switch (sortOrder)
             {
@@ -38,7 +44,20 @@ namespace FinalDepi.Controllers
                     break;
             }
 
+            // Get all categories for the filter
+            ViewBag.Categories = _context.Categories.ToList();
+            ViewBag.SelectedCategory = categoryId;
+
             return View(products.ToList());
+        }
+
+        // Display categories page
+        public IActionResult Categories()
+        {
+            var categories = _context.Categories
+                .Include(c => c.Products)
+                .ToList();
+            return View(categories);
         }
 
         public async Task<IActionResult> Search(string query)
@@ -46,7 +65,7 @@ namespace FinalDepi.Controllers
             var products = string.IsNullOrWhiteSpace(query)
                 ? new List<Product>()
                 : await _context.Products
-                    .Where(p => p.Name.Contains(query) || p.Description.Contains(query))
+                    .Where(p => p.Name.Contains(query))
                     .ToListAsync();
             ViewBag.Query = query;
             return View(products);

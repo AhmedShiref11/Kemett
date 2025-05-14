@@ -2,35 +2,68 @@
 @{
     ViewData["Title"] = "All Products";
     var selectedSort = Context.Request.Query["sortOrder"].ToString();
+    var selectedCategory = ViewBag.SelectedCategory as int?;
 }
 
 <div class="container mt-4">
     <h2 class="mb-4">Our Products</h2>
-    <form method="get" class="mb-3 d-flex align-items-center" style="gap: 1rem;">
-        <label for="sortOrder" class="form-label mb-0">Sort by:</label>
-        <select name="sortOrder" id="sortOrder" class="form-select" style="width: 200px; border: 1px solid #E5C97B; background: #fff; color: #222;" onchange="this.form.submit()">
-            @if (selectedSort == "price_asc") {
-                <option value="price_asc" selected>Price: Low to High</option>
-            } else {
-                <option value="price_asc">Price: Low to High</option>
-            }
-            @if (selectedSort == "price_desc") {
-                <option value="price_desc" selected>Price: High to Low</option>
-            } else {
-                <option value="price_desc">Price: High to Low</option>
-            }
-            @if (selectedSort == "name_asc") {
-                <option value="name_asc" selected>Name: A-Z</option>
-            } else {
-                <option value="name_asc">Name: A-Z</option>
-            }
-            @if (selectedSort == "name_desc") {
-                <option value="name_desc" selected>Name: Z-A</option>
-            } else {
-                <option value="name_desc">Name: Z-A</option>
-            }
-        </select>
-    </form>
+    
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <form method="get" class="d-flex align-items-center" style="gap: 1rem;">
+                <label for="sortOrder" class="form-label mb-0">Sort by:</label>
+                <select name="sortOrder" id="sortOrder" class="form-select" style="width: 200px; border: 1px solid #E5C97B; background: #fff; color: #222;" onchange="this.form.submit()">
+                    @if (selectedSort == "price_asc") {
+                        <option value="price_asc" selected>Price: Low to High</option>
+                    } else {
+                        <option value="price_asc">Price: Low to High</option>
+                    }
+                    @if (selectedSort == "price_desc") {
+                        <option value="price_desc" selected>Price: High to Low</option>
+                    } else {
+                        <option value="price_desc">Price: High to Low</option>
+                    }
+                    @if (selectedSort == "name_asc") {
+                        <option value="name_asc" selected>Name: A-Z</option>
+                    } else {
+                        <option value="name_asc">Name: A-Z</option>
+                    }
+                    @if (selectedSort == "name_desc") {
+                        <option value="name_desc" selected>Name: Z-A</option>
+                    } else {
+                        <option value="name_desc">Name: Z-A</option>
+                    }
+                </select>
+                @if (selectedCategory.HasValue)
+                {
+                    <input type="hidden" name="categoryId" value="@selectedCategory" />
+                }
+            </form>
+        </div>
+        <div class="col-md-6">
+            <form method="get" class="d-flex align-items-center" style="gap: 1rem;">
+                <label for="categoryId" class="form-label mb-0">Filter by category:</label>
+                <select name="categoryId" id="categoryId" class="form-select" style="width: 200px; border: 1px solid #E5C97B; background: #fff; color: #222;" onchange="this.form.submit()">
+                    <option value="">All Categories</option>
+                    @foreach (var category in ViewBag.Categories)
+                    {
+                        if (selectedCategory == category.CategoryId)
+                        {
+                            <option value="@category.CategoryId" selected>@category.Name</option>
+                        }
+                        else
+                        {
+                            <option value="@category.CategoryId">@category.Name</option>
+                        }
+                    }
+                </select>
+                @if (!string.IsNullOrEmpty(selectedSort))
+                {
+                    <input type="hidden" name="sortOrder" value="@selectedSort" />
+                }
+            </form>
+        </div>
+    </div>
     
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         @foreach (var product in Model)
