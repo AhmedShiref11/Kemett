@@ -2,6 +2,7 @@
 @inject UserManager<FinalDepi.Models.ApplicationUser> UserManager
 @{
     ViewData["Title"] = "Home Page";
+    var selectedSort = Context.Request.Query["sortOrder"].ToString();
 }
 
 @if (User.IsInRole("Admin"))

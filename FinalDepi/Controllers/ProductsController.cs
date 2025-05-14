@@ -15,12 +15,30 @@ namespace FinalDepi.Controllers
         }
 
         // Display all products
-        public async Task<IActionResult> Index()
+        public IActionResult Index(string sortOrder)
         {
-            var products = await _context.Products
-                .Include(p => p.Category)
-                .ToListAsync();
-            return View(products);
+            var products = _context.Products.Include(p => p.Category).AsQueryable();
+
+            switch (sortOrder)
+            {
+                case "price_asc":
+                    products = products.OrderBy(p => p.Price);
+                    break;
+                case "price_desc":
+                    products = products.OrderByDescending(p => p.Price);
+                    break;
+                case "name_asc":
+                    products = products.OrderBy(p => p.Name);
+                    break;
+                case "name_desc":
+                    products = products.OrderByDescending(p => p.Name);
+                    break;
+                default:
+                    products = products.OrderBy(p => p.Name);
+                    break;
+            }
+
+            return View(products.ToList());
         }
 
         public async Task<IActionResult> Search(string query)

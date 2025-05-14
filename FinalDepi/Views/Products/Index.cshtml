@@ -1,10 +1,36 @@
 @model IEnumerable<FinalDepi.Models.Product>
 @{
     ViewData["Title"] = "All Products";
+    var selectedSort = Context.Request.Query["sortOrder"].ToString();
 }
 
 <div class="container mt-4">
     <h2 class="mb-4">Our Products</h2>
+    <form method="get" class="mb-3 d-flex align-items-center" style="gap: 1rem;">
+        <label for="sortOrder" class="form-label mb-0">Sort by:</label>
+        <select name="sortOrder" id="sortOrder" class="form-select" style="width: 200px; border: 1px solid #E5C97B; background: #fff; color: #222;" onchange="this.form.submit()">
+            @if (selectedSort == "price_asc") {
+                <option value="price_asc" selected>Price: Low to High</option>
+            } else {
+                <option value="price_asc">Price: Low to High</option>
+            }
+            @if (selectedSort == "price_desc") {
+                <option value="price_desc" selected>Price: High to Low</option>
+            } else {
+                <option value="price_desc">Price: High to Low</option>
+            }
+            @if (selectedSort == "name_asc") {
+                <option value="name_asc" selected>Name: A-Z</option>
+            } else {
+                <option value="name_asc">Name: A-Z</option>
+            }
+            @if (selectedSort == "name_desc") {
+                <option value="name_desc" selected>Name: Z-A</option>
+            } else {
+                <option value="name_desc">Name: Z-A</option>
+            }
+        </select>
+    </form>
     
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         @foreach (var product in Model)
